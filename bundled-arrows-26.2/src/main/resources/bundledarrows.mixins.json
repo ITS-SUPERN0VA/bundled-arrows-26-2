@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"package": "com.astralis.bundledarrows.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"mixins": [
+		"BowItemMixin",
+		"RangedWeaponItemMixin",
+		"PlayerEntityMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

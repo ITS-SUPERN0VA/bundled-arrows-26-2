@@ -1,0 +1,71 @@
+plugins {
+	id 'fabric-loom' version "${project.loom_version}"
+	id 'maven-publish'
+}
+
+java {
+	toolchain {
+		// Minecraft 26.2 runs on Java 25.
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+}
+
+repositories {
+	mavenCentral()
+
+	maven {
+		name = "Fabric"
+		url = "https://maven.fabricmc.net/"
+	}
+
+	maven {
+		name = "Mojang"
+		url = "https://libraries.minecraft.net/"
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+
+	// 26.x is shipped unobfuscated by Mojang and Fabric no longer publishes
+	// Yarn mappings for it, so we build against Mojang's own official names.
+	// (Older Loom versions used mappings "net.fabricmc:yarn:...:v2" — that
+	// coordinate no longer exists for 26.x.)
+	mappings loom.officialMojangMappings()
+
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+}
+
+processResources {
+	inputs.property "version", project.version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 25
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${project.base.archivesName.get()}"}
+	}
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = "UTF-8"
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+		}
+	}
+
+	repositories {
+	}
+}

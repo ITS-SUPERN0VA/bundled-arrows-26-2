@@ -1,0 +1,31 @@
+{
+	"schemaVersion": 1,
+	"id": "bundledarrows",
+	"version": "${version}",
+	"name": "Bundled Arrows",
+	"description": "Use arrows stored in bundles with bows and crossbows.",
+	"authors": [
+		"Astralis"
+	],
+	"contact": {
+		"homepage": "",
+		"sources": "https://github.com/Astralis-B/bundled-arrows"
+	},
+	"license": "MIT",
+	"icon": "assets/bundledarrows/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.astralis.bundledarrows.BundledArrowsMod"
+		]
+	},
+	"mixins": [
+		"bundledarrows.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~26.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}
