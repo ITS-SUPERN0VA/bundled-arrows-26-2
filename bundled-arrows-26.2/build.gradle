@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version "${project.loom_version}"
+	id 'fabric-loom' version '1.17-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -29,8 +29,6 @@ dependencies {
 
 	// 26.x is shipped unobfuscated by Mojang and Fabric no longer publishes
 	// Yarn mappings for it, so we build against Mojang's own official names.
-	// (Older Loom versions used mappings "net.fabricmc:yarn:...:v2" — that
-	// coordinate no longer exists for 26.x.)
 	mappings loom.officialMojangMappings()
 
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
