@@ -27,9 +27,11 @@ repositories {
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 
-	// 26.x is shipped unobfuscated by Mojang and Fabric no longer publishes
-	// Yarn mappings for it, so we build against Mojang's own official names.
-	mappings loom.officialMojangMappings()
+	// 26.x ships UNOBFUSCATED - there are no client/server mapping files
+	// for Mojang to publish, so loom.officialMojangMappings() fails here.
+	// Use an identity mapping instead: the names in the jar already ARE
+	// the real (Mojang) names, so there's nothing to remap.
+	mappings "net.fabricmc:intermediary:0.0.0:v2"
 
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
