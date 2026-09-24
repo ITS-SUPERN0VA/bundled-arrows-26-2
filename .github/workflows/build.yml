@@ -7,6 +7,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: bundled-arrows-26.2
     steps:
       - uses: actions/checkout@v4
 
@@ -26,4 +29,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bundled-arrows-jar
-          path: build/libs/*.jar
+          path: bundled-arrows-26.2/build/libs/*.jar
