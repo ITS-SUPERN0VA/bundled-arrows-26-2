@@ -18,10 +18,11 @@ package com.astralis.bundledarrows;
 
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.item.component.BundleContents; // VERIFY: package/name for the bundle-contents data component
+import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate; // NEW in 26.2: BundleContents now stores these, not ItemStack directly. .create() -> ItemStack.
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +91,8 @@ public class BundledArrowsMod implements ModInitializer {
 				BundleContents bundleContents = stack.getOrDefault(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY);
 
 				if (!bundleContents.isEmpty()) {
-					for (ItemStack bundleItem : bundleContents.items()) { // VERIFY: accessor name on BundleContents
+					for (ItemStackTemplate template : bundleContents.items()) {
+						ItemStack bundleItem = template.create();
 						if (bundleItem.getItem() instanceof ArrowItem) {
 							cache.bundleSlot = i;
 							cache.arrowStack = bundleItem.copy();
@@ -121,7 +123,8 @@ public class BundledArrowsMod implements ModInitializer {
 				BundleContents bundleContents = stack.getOrDefault(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY);
 
 				if (!bundleContents.isEmpty()) {
-					for (ItemStack bundleItem : bundleContents.items()) {
+					for (ItemStackTemplate template : bundleContents.items()) {
+						ItemStack bundleItem = template.create();
 						if (bundleItem.getItem() instanceof ArrowItem) {
 							BundleContents newContents = removeOneArrowFromBundle(bundleContents);
 							stack.set(DataComponents.BUNDLE_CONTENTS, newContents);
@@ -158,8 +161,8 @@ public class BundledArrowsMod implements ModInitializer {
 	 */
 	private static BundleContents removeOneArrowFromBundle(BundleContents original) {
 		List<ItemStack> items = new ArrayList<>();
-		for (ItemStack item : original.items()) {
-			items.add(item.copy());
+		for (ItemStackTemplate template : original.items()) {
+			items.add(template.create().copy());
 		}
 
 		boolean arrowRemoved = false;
@@ -178,13 +181,17 @@ public class BundledArrowsMod implements ModInitializer {
 
 		Collections.reverse(items);
 
-		BundleContents.Builder builder = new BundleContents.Builder(BundleContents.EMPTY); // VERIFY: Builder ctor arg
+		// VERIFY (unresolved): BundleContents.Mutable is the real nested class
+		// name (confirmed via mapping history), but its exact constructor and
+		// "add items back, then get a BundleContents out" API for 26.2 is not
+		// yet confirmed here - see chat.
+		BundleContents.Mutable builder = new BundleContents.Mutable(BundleContents.EMPTY);
 		for (ItemStack item : items) {
 			if (!item.isEmpty()) {
-				builder.add(item);
+				builder.tryInsert(item);
 			}
 		}
 
-		return builder.build();
+		return builder.toImmutable(); // VERIFY: method name to get BundleContents back out of Mutable
 	}
 }
